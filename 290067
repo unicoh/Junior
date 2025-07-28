@@ -1,0 +1,421 @@
+
+
+    // Dados iniciais (seriam substituídos por um backend real)
+    let products = JSON.parse(localStorage.getItem('products')) || [
+        {
+            id: 1,
+            type: 'ebook',
+            title: "Marketing Digital para Iniciantes",
+            category: "Marketing",
+            price: 100,
+            image: "https://images.unsplash.com/photo-1544717305-2782549b5136?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+            description: "Aprenda os fundamentos do marketing digital e como aplicar em seu negócio.",
+            comments: [
+                {
+                    id: 1,
+                    author: "Maria Silva",
+                    text: "Ótimo conteúdo, me ajudou muito!",
+                    date: "2023-05-15"
+                }
+            ]
+        },
+        {
+            id: 2,
+            type: 'ebook',
+            title: "Finanças Pessoais",
+            category: "Negócios",
+            price: 150,
+            image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+            description: "Controle suas finanças e alcance a independência financeira.",
+            comments: []
+        },
+        {
+            id: 3,
+            type: 'service',
+            title: "Consultoria de Marketing",
+            price: 1500.00,
+            image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+            description: "Plano personalizado para alavancar seu negócio online.",
+            comments: []
+        },
+        {
+            id: 4,
+            type: 'service',
+            title: "Gestão de Redes Sociais",
+            price: 2000.00,
+            image: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+            description: "Gerenciamos suas redes sociais com conteúdo estratégico.",
+            comments: []
+        }
+    ];
+
+    // Salvar produtos no localStorage
+    function saveProducts() {
+        localStorage.setItem('products', JSON.stringify(products));
+    }
+
+    // Navegação entre páginas
+    function setupNavigation() {
+        // Mostrar página inicial por padrão
+        showPage('home');
+
+        // Configurar links de navegação
+        const navLinks = document.querySelectorAll('.nav-link:not(#admin-link)');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.getAttribute('data-page');
+                showPage(page);
+
+                // Fechar menu mobile se estiver aberto
+                document.getElementById('main-menu').classList.remove('show');
+            });
+        });
+
+        // Menu mobile
+        document.getElementById('mobile-menu').addEventListener('click', () => {
+            document.getElementById('main-menu').classList.toggle('show');
+        });
+
+        // Configurar link do WhatsApp
+        const whatsappLinks = document.querySelectorAll('.whatsapp-link, #whatsapp-float');
+        whatsappLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const phoneNumber = '258834932941'; // Substitua pelo seu número
+                const message = "Olá! Gostaria de mais informações sobre seus produtos e serviços.";
+                window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+            });
+        });
+
+        // Configurar link de admin com modal de login
+        document.getElementById('admin-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('login-modal').style.display = 'flex';
+        });
+
+        // Configurar modal de login
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+            if (password === 'FREEFIRE2024') {
+                document.getElementById('login-modal').style.display = 'none';
+                showPage('admin');
+                document.getElementById('main-menu').classList.remove('show');
+            } else {
+                alert('Senha incorreta!');
+            }
+        });
+
+        document.getElementById('cancel-login').addEventListener('click', () => {
+            document.getElementById('login-modal').style.display = 'none';
+        });
+    }
+
+    // Mostrar página específica
+    function showPage(pageId) {
+        // Esconder todas as páginas
+        document.querySelectorAll('.page').forEach(page => {
+            page.classList.remove('active');
+        });
+
+        // Mostrar página selecionada
+        document.getElementById(pageId).classList.add('active');
+
+        // Atualizar conteúdo específico da página
+        if (pageId === 'home') {
+            loadFeaturedProducts();
+        } else if (pageId === 'ebooks') {
+            loadProducts('ebook');
+        } else if (pageId === 'services') {
+            loadProducts('service');
+        } else if (pageId === 'admin') {
+            loadAdminProducts();
+        }
+
+        // Rolagem para o topo
+        window.scrollTo(0, 0);
+    }
+
+    // Carregar produtos em destaque na home
+    function loadFeaturedProducts() {
+        const featuredEbooks = document.getElementById('featured-ebooks');
+        const featuredServices = document.getElementById('featured-services');
+
+        featuredEbooks.innerHTML = '';
+        featuredServices.innerHTML = '';
+
+        // Pegar 2 e-books e 2 serviços para exibir
+        const ebooks = products.filter(p => p.type === 'ebook').slice(0, 3);
+        const services = products.filter(p => p.type === 'service').slice(0, 3);
+
+        // Adicionar e-books
+        ebooks.forEach(ebook => {
+            featuredEbooks.appendChild(createProductCard(ebook));
+        });
+
+        // Adicionar serviços
+        services.forEach(service => {
+            featuredServices.appendChild(createProductCard(service));
+        });
+    }
+
+    // Carregar todos os produtos de um tipo (ebook ou service)
+    function loadProducts(type) {
+        const grid = type === 'ebook' ? document.getElementById('ebooks-grid') : document.getElementById('services-grid');
+        grid.innerHTML = '';
+
+        const filteredProducts = products.filter(p => p.type === type);
+
+        if (filteredProducts.length === 0) {
+            grid.innerHTML = '<p class="text-center">Nenhum produto encontrado.</p>';
+            return;
+        }
+
+        filteredProducts.forEach(product => {
+            const card = createProductCard(product, true);
+            grid.appendChild(card);
+        });
+    }
+
+    // Criar card de produto
+    function createProductCard(product, showComments = false) {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+
+        let priceHTML = '';
+        if (product.price) {
+            priceHTML = `<div class="price">${product.price.toFixed(2)} MT</div>`;
+        }
+
+        card.innerHTML = `
+            <img src="${product.image}" alt="${product.title}">
+            <div class="product-info">
+                ${product.category ? `<span class="category">${product.category}</span>` : ''}
+                <h3>${product.title}</h3>
+                <p>${product.description}</p>
+                ${priceHTML}
+                <button class="btn whatsapp-btn" data-product="${product.title}">
+                    ${product.type === 'ebook' ? 'Comprar via WhatsApp' : 'Contratar via WhatsApp'}
+                </button>
+            </div>
+        `;
+
+        // Adicionar seção de comentários se solicitado
+        if (showComments) {
+            const commentsSection = document.createElement('div');
+            commentsSection.className = 'comments-section';
+
+            // Formulário de comentário
+            commentsSection.innerHTML += `
+                <h3>Comentários</h3>
+                <form class="comment-form" data-product="${product.id}">
+                    <textarea placeholder="Deixe seu comentário..." required></textarea>
+                    <button type="submit" class="btn">Enviar Comentário</button>
+                </form>
+                <div class="comments-list" id="comments-${product.id}"></div>
+            `;
+
+            card.appendChild(commentsSection);
+
+            // Carregar comentários
+            loadComments(product.id);
+
+            // Configurar envio de comentário
+            const commentForm = commentsSection.querySelector('.comment-form');
+            commentForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const text = commentForm.querySelector('textarea').value;
+                addComment(product.id, text);
+                commentForm.querySelector('textarea').value = '';
+            });
+        }
+
+        // Configurar botão do WhatsApp
+        const whatsappBtn = card.querySelector('.whatsapp-btn');
+        whatsappBtn.addEventListener('click', () => {
+            const phoneNumber = '258834932491'; // meu número de whatsApp
+            const message = `Olá! Tenho interesse no ${product.type === 'ebook' ? 'e-book' : 'serviço'}: ${product.title}. Pode me dar mais informações?`;
+            window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+        });
+
+        return card;
+    }
+
+    // Carregar comentários de um produto
+    function loadComments(productId) {
+        const commentsList = document.getElementById(`comments-${productId}`);
+        if (!commentsList) return;
+
+        commentsList.innerHTML = '';
+
+        const product = products.find(p => p.id === productId);
+        if (!product || !product.comments || product.comments.length === 0) {
+            commentsList.innerHTML = '<p>Nenhum comentário ainda. Seja o primeiro a comentar!</p>';
+            return;
+        }
+
+        product.comments.forEach(comment => {
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'comment';
+
+            // Pegar iniciais do autor para o avatar
+            const initials = comment.author.split(' ').map(n => n[0]).join('').toUpperCase();
+
+            commentDiv.innerHTML = `
+                <div class="comment-avatar">${initials}</div>
+                <div class="comment-content">
+                    <div class="comment-author">${comment.author}</div>
+                    <div class="comment-date">${formatDate(comment.date)}</div>
+                    <p>${comment.text}</p>
+                </div>
+            `;
+
+            commentsList.appendChild(commentDiv);
+        });
+    }
+
+    // Adicionar comentário a um produto
+    function addComment(productId, text) {
+        const productIndex = products.findIndex(p => p.id === productId);
+        if (productIndex === -1) return;
+
+        // Criar novo comentário
+        const newComment = {
+            id: Date.now(),
+            author: "Usuário Anônimo", // Em um sistema real, seria o nome do usuário logado
+            text: text,
+            date: new Date().toISOString().split('T')[0]
+        };
+
+        // Adicionar ao produto
+        if (!products[productIndex].comments) {
+            products[productIndex].comments = [];
+        }
+
+        products[productIndex].comments.unshift(newComment);
+        saveProducts();
+
+        // Recarregar comentários
+        loadComments(productId);
+    }
+
+    // Formatar data (YYYY-MM-DD para DD/MM/YYYY)
+    function formatDate(dateString) {
+        const [year, month, day] = dateString.split('-');
+        return `${day}/${month}/${year}`;
+    }
+
+    // Área Administrativa
+    function loadAdminProducts() {
+        const productsList = document.getElementById('admin-products-list');
+        productsList.innerHTML = '';
+
+        if (products.length === 0) {
+            productsList.innerHTML = '<li>Nenhum produto cadastrado.</li>';
+            return;
+        }
+
+        products.forEach(product => {
+            const li = document.createElement('li');
+            li.className = 'product-item';
+
+            li.innerHTML = `
+                <div class="product-item-info">
+                    <h4>${product.title}</h4>
+                    <span>${product.type === 'ebook' ? 'E-book' : 'Serviço'} - ${product.price ? product.price.toFixed(2) + ' MT' : 'Preço não definido'}</span>
+                </div>
+                <div class="product-item-actions">
+                    <button class="btn danger delete-btn" data-id="${product.id}">Excluir</button>
+                </div>
+            `;
+
+            productsList.appendChild(li);
+
+            // Configurar botão de exclusão
+            li.querySelector('.delete-btn').addEventListener('click', () => {
+                if (confirm(`Tem certeza que deseja excluir "${product.title}"?`)) {
+                    deleteProduct(product.id);
+                }
+            });
+        });
+    }
+
+    // Adicionar novo produto
+    document.getElementById('product-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const type = document.getElementById('product-type').value;
+        const title = document.getElementById('product-title').value;
+        const category = type === 'ebook' ? document.getElementById('product-category').value : '';
+        const price = parseFloat(document.getElementById('product-price').value);
+        const imageInput = document.getElementById('product-image');
+        const description = document.getElementById('product-description').value;
+
+        // Verificar se uma imagem foi selecionada
+        if (imageInput.files.length === 0) {
+            alert('Por favor, selecione uma imagem para o produto.');
+            return;
+        }
+
+        // Converter imagem para base64 para armazenamento local
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            const imageBase64 = event.target.result;
+
+            const newProduct = {
+                id: Date.now(),
+                type: type,
+                title: title,
+                category: category,
+                price: price,
+                image: imageBase64,
+                description: description,
+                comments: []
+            };
+
+            products.unshift(newProduct);
+            saveProducts();
+
+            // Limpar formulário
+            e.target.reset();
+            document.getElementById('image-preview').innerHTML = '<span>Pré-visualização da imagem</span>';
+
+            // Recarregar lista de produtos
+            loadAdminProducts();
+
+            alert('Produto adicionado com sucesso!');
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+    });
+
+    // Preview da imagem selecionada
+    document.getElementById('product-image').addEventListener('change', function (e) {
+        const preview = document.getElementById('image-preview');
+        if (this.files.length > 0) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                preview.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
+            };
+            reader.readAsDataURL(this.files[0]);
+        } else {
+            preview.innerHTML = '<span>Pré-visualização da imagem</span>';
+        }
+    });
+
+    // Excluir produto
+    function deleteProduct(productId) {
+        products = products.filter(p => p.id !== productId);
+        saveProducts();
+        loadAdminProducts();
+    }
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', () => {
+        setupNavigation();
+
+        // Verificar se há produtos no localStorage, senão usar os iniciais
+        if (!localStorage.getItem('products')) {
+            saveProducts();
+        }
+    });

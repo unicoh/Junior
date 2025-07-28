@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css" type="text/css" media="all" />
+    <title>ConhecimentoDigital - E-books e Serviços</title>
+
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <h1>Conhecimento<span>Digital</span></h1>
+        </div>
+        <nav>
+            <ul id="main-menu">
+                <li><a href="#" class="nav-link" data-page="home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#" class="nav-link" data-page="ebooks"><i class="fas fa-book"></i> E-books</a></li>
+                <li><a href="#" class="nav-link" data-page="services"><i class="fas fa-cogs"></i> Serviços</a></li>
+                <li><a href="#" class="nav-link" id="admin-link"><i class="fas fa-user-shield"></i> Admin</a></li>
+            </ul>
+            <div class="mobile-menu" id="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Modal de Login -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <h2>Acesso Administrativo</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn secondary" id="cancel-login">Cancelar</button>
+                    <button type="submit" class="btn">Entrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Página Inicial -->
+    <section id="home" class="page active">
+        <div class="hero">
+            <div class="container">
+                <h2>Conhecimento que transforma</h2>
+                <p>Adquira nossos e-books exclusivos ou contrate nossos serviços especializados com apenas um clique</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn nav-link" data-page="ebooks">Ver E-books</a>
+                    <a href="#" class="btn secondary nav-link" data-page="services">Conhecer Serviços</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <h2 class="section-title">E-books em Destaque</h2>
+            <div class="products-grid" id="featured-ebooks">
+                <!-- E-books serão carregados via JavaScript -->
+            </div>
+            <div class="text-center">
+                <a href="#" class="btn nav-link" data-page="ebooks">Ver Todos os E-books</a>
+            </div>
+        </div>
+
+        <div class="container">
+            <h2 class="section-title">Nossos Serviços</h2>
+            <div class="products-grid" id="featured-services">
+                <!-- Serviços serão carregados via JavaScript -->
+            </div>
+            <div class="text-center">
+                <a href="#" class="btn secondary nav-link" data-page="services">Ver Todos os Serviços</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Página de E-books -->
+    <section id="ebooks" class="page">
+        <div class="container">
+            <h1 class="section-title">Nossos E-books</h1>
+            <p class="text-center"></p>
+            <div class="products-grid" id="ebooks-grid">
+                <!-- E-books serão carregados via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Página de Serviços -->
+    <section id="services" class="page">
+        <div class="container">
+            <h1 class="section-title">Nossos Serviços</h1>
+            <p class="text-center"></p>
+            <div class="products-grid" id="services-grid">
+                <!-- Serviços serão carregados via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Página Admin -->
+    <section id="admin" class="page">
+        <div class="container">
+            <h1 class="section-title">Área Administrativa</h1>
+
+            <div class="admin-panel">
+                <h2>Adicionar Novo Produto</h2>
+                <form id="product-form" class="admin-form">
+                    <div class="form-group">
+                        <label for="product-type">Tipo de Produto</label>
+                        <select id="product-type" required>
+                            <option value="">Selecione...</option>
+                            <option value="ebook">E-book</option>
+                            <option value="service">Serviço</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-title">Título</label>
+                        <input type="text" id="product-title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-category">Categoria (apenas para e-books)</label>
+                        <input type="text" id="product-category">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-price">Preço (MT)</label>
+                        <input type="number" id="product-price" step="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-image">Imagem do Produto</label>
+                        <input type="file" id="product-image" accept="image/*" required>
+                        <div class="image-preview" id="image-preview">
+                            <span>Pré-visualização da imagem</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-description">Descrição</label>
+                        <textarea id="product-description" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn">Adicionar Produto</button>
+                </form>
+
+                <h2>Produtos Cadastrados</h2>
+                <ul class="products-list" id="admin-products-list">
+                    <!-- Produtos serão carregados via JavaScript -->
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h3>ConhecimentoDigital</h3>
+                    <p>Sua plataforma de e-books e serviços profissionais.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="#" class="nav-link" data-page="home">Home</a></li>
+                        <li><a href="#" class="nav-link" data-page="ebooks">E-books</a></li>
+                        <li><a href="#" class="nav-link" data-page="services">Serviços</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contato</h3>
+                    <ul class="social-links">
+                        <li><a href="#" class="whatsapp-link"><i class="fab fa-whatsapp"></i> WhatsApp</a></li>
+                        <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+                        <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 ConhecimentoDigital. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botão flutuante do WhatsApp -->
+    <a href="#" class="whatsapp-float" id="whatsapp-float">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+<!-- Font Awesome para ícones -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+<script src="script.js"></script>
+</body>
+
+</html>
